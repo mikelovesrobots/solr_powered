@@ -343,7 +343,7 @@ module SolrPowered
 
       select[:facet] = true
       select['facet.field'] = options[:facets]
-      select['facet.limit'] = -1
+      select['facet.limit'] = options[:facet_limit] || -1
       select['facet.missing'] = false
       #select['facet.mincount'] = 2 # not working as understood
       select['facet.zeros'] = false
