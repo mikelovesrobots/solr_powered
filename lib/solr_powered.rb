@@ -348,6 +348,11 @@ module SolrPowered
       #select['facet.mincount'] = 2 # not working as understood
       select['facet.zeros'] = false
 
+      # By default facets are sorted descending if facet.limit is > 0
+      if options.has_key? :facet_sort
+        select['facet.sort'] = options[:facet_sort]
+      end
+
       facets = options[:facets]
       options[:facets] = []
     end
