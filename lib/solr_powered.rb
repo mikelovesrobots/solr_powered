@@ -354,10 +354,6 @@ module SolrPowered
       end
 
       facets = options[:facets]
-      if facets.kind_of? Enumerable
-        facets.collect!(&:to_s)
-      end
-
       options[:facets] = []
     end
 
