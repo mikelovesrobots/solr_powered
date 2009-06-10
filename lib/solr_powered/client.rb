@@ -16,7 +16,7 @@ class SolrPowered::Client
 
   def initialize options = {}
     @host = options[:host] || 'localhost'
-    @port = options[:post] || 8982
+    @port = options[:port] || 8982
     @path = options[:path] || 'solr'
     @auto_commit = options.has_key?(:auto_commit) ? options[:auto_commit] : true
   end
