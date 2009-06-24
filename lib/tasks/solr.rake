@@ -45,7 +45,7 @@ namespace :solr do
     as it will run prior to any solr:start or solr:restart task.
     DESC
     task :write => ['solr:preload_models'] do
-      schema_path = "#{SolrPowered::APACHE_SOLR_PATH}/solr/conf/schema.xml"
+      schema_path = "#{SolrPowered.solr_path}/solr/conf/schema.xml"
       schema_file = File.open(schema_path, 'w') do |schema|
         schema.write schema_xml
       end
@@ -73,13 +73,13 @@ namespace :solr do
     # make sure the server isn't already running
     if solr_responds?
       $stderr.print "solr:start failure - port #{SolrPowered.port} already "
-      $stderr.print "in use, perhaps solr is still running\n"
+      $stderr.print "in use, perhaps solr is already running\n"
       next
       exit(1)
     end
 
     # issue the start command
-    Dir.chdir(SolrPowered::APACHE_SOLR_PATH) do
+    Dir.chdir(SolrPowered.solr_path) do
       start = "nohup java -Dsolr.data.dir=#{SolrPowered.data_dir}"
       start << " -DSTOP.PORT=#{SolrPowered.stop_port}"
       start << " -DSTOP.KEY=solr_powered_#{SolrPowered.port}"
@@ -128,7 +128,7 @@ namespace :solr do
     end
 
     # issue the stop command
-    Dir.chdir(SolrPowered::APACHE_SOLR_PATH) do
+    Dir.chdir(SolrPowered.solr_path) do
       stop = "java -DSTOP.PORT=#{SolrPowered.stop_port} "
       stop << "-DSTOP.KEY=solr_powered_#{SolrPowered.port} "
       stop << '-jar start.jar --stop'
@@ -235,20 +235,12 @@ def schema_xml
   unless File.exists?(template_path)
     template_path = SolrPowered::PLUGIN_PATH + "/config/schema.xml.erb"
   end
-  
-  # variables for the template
-  default_operator = SolrPowered.default_operator
-  default_search_field = SolrPowered.default_search_field
-  default_search_field_type = SolrPowered.default_search_field_type
 
   fields = {}
   copy_fields = {}
 
   SolrPowered.indexes.each_value do |field|
     fields[field[:name]] = field_string(field)
-    if field[:copy_to_default]
-      copy_fields[field[:name]] = copy_field_string(field[:name], default_search_field)
-    end
     if field[:copy_to]
       copy_fields[:field[:name]] == copy_field_string(field[:name], field[:copy_to])
     end
